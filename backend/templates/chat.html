@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat</title>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script type="text/javascript" charset="utf-8">
+        var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
+        
+        socket.on('connect', function() {
+            socket.emit('my event', {data: 'User Connected'});
+        });
+
+        function sendMessage() {
+        var content = document.getElementById("messageContent").value;
+        socket.emit('send message', {content: content});
+        document.getElementById("messageContent").value = '';
+        return false; // This should prevent the default form submission
+    }
+
+        socket.on('receive message', function(data) {
+            console.log("Received message:", data);  // Log received data to the console
+            renderMessage(data);
+        });
+
+        function renderMessage(data) {
+            var messages = document.getElementById("messages");
+            var messageElement = document.createElement('div');
+            messageElement.innerHTML = `<strong>${data.sender || 'Anonymous'}:</strong> ${data.content}`;
+            messages.appendChild(messageElement);
+            messages.scrollTop = messages.scrollHeight; // Scroll to the bottom
+        }
+    </script>
+</head>
+<body>
+    <div id="messages" style="height: 300px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px; margin-bottom: 10px;">
+        {% for message in messages %}
+            <div><strong>{{ message.sender.username }}:</strong> {{ message.content }}</div>
+        {% endfor %}
+    </div>
+    <form onsubmit="return sendMessage();">
+        Message: <input type="text" id="messageContent" placeholder="Your message here..." required><br>
+        <input type="submit" value="Send">
+    </form>
+</body>
+</html>
