@@ -3,6 +3,6 @@
     "concurrently": "^8.2.2"
   },
   "scripts": {
-    "start": "concurrently \"cd frontend && ng serve\" \"cd backend && flask run\""
+    "start": "concurrently \"cd frontend && ng serve\" \"cd backend && set FLASK_APP=app.py && flask run\""
   }
 }
